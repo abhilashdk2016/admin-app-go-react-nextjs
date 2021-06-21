@@ -1,0 +1,1 @@
+# admin-app-go-react-nextjs
