@@ -104,7 +104,7 @@ func CreateOrder(c *fiber.Ctx) error {
 			})
 		}
 
-		lineItems = append(lineItem, &stripe.CheckoutSessionLineItemParams{
+		lineItems = append(lineItems, &stripe.CheckoutSessionLineItemParams{
 			Name: stripe.String(product.Title),
 			Description: stripe.String(product.Description),
 			Images: []*string{stripe.String(product.Image)},
