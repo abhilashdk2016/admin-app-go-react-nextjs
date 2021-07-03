@@ -4,6 +4,7 @@ import (
 	"ambassador/src/database"
 	"ambassador/src/middlewares"
 	"ambassador/src/models"
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"strings"
 	"time"
@@ -44,9 +45,9 @@ func Login( c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		return err
 	}
-
+	fmt.Println("Hello")
 	var user models.User
-
+	fmt.Println("email", data["email"])
 	database.DB.Where("email = ?", data["email"]).First(&user)
 
 	if user.Id == 0 {
@@ -77,7 +78,7 @@ func Login( c *fiber.Ctx) error {
 			"message": "Un-authorised",
 		})
 	}
-
+	fmt.Println(user.Id)
 	token, err := middlewares.GenerateJwt(user.Id, scope)
 	if err != nil {
 		c.Status(fiber.StatusBadRequest)

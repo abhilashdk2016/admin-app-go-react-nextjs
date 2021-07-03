@@ -1,7 +1,8 @@
 package middlewares
 
 import (
-	"github.com/dgrijalva/jwt-go/v4"
+	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
 	"strings"
@@ -46,7 +47,7 @@ func GetUserId(c *fiber.Ctx) (uint, error) {
 	cookie := c.Cookies("jwt")
 
 	token, err := jwt.ParseWithClaims(cookie, &ClaimsWithScope{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("secret"), nil
+		return []byte(SecretKey), nil
 	})
 
 	if err != nil {
@@ -59,11 +60,12 @@ func GetUserId(c *fiber.Ctx) (uint, error) {
 }
 
 func GenerateJwt(id uint, scope string) (string, error) {
+	fmt.Println("id ", id)
 	payload := ClaimsWithScope{
 
 	}
-    payload.Subject = string(id)
-    payload.ExpiresAt = jwt.NewTime(float64(time.Now().Add(time.Hour * 24).Unix()))
+    payload.Subject = strconv.Itoa(int(id))
+    payload.ExpiresAt = time.Now().Add(time.Hour * 24).Unix()
     payload.Scope = scope
 
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, payload).SignedString([]byte(SecretKey))

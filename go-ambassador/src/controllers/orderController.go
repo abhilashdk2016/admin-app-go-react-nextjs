@@ -114,7 +114,7 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	stripe.Key = "<your_stripe_secret_key>"
+	stripe.Key = "sk_test_51J8slqSEhLOwuAODgG5RSMHbCNAerpBYq7Kk4xGhlYgidBNoIhnn9PNNlBdCvJ9MsT4Mm3lCAAF03pDkL0UN0MAE00wFv13G6C"
 
 	params := stripe.CheckoutSessionParams{
 		SuccessURL: stripe.String("http://localhost:5000/success?source={CHECKOUT_SESSION_ID}"),
