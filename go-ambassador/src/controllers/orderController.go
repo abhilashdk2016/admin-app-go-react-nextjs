@@ -71,11 +71,12 @@ func CreateOrder(c *fiber.Ctx) error {
 
 	tx := database.DB.Begin()
 
-	if dbErr := tx.Create(&order); dbErr != nil {
+	if dbErr := tx.Create(&order).Error; dbErr != nil {
+		fmt.Println("Error while creating Order", dbErr.Error())
 		tx.Rollback()
 		c.Status(fiber.StatusBadRequest)
-		c.JSON(fiber.Map{
-			"message": "Database Error",
+		return c.JSON(fiber.Map{
+			"message": dbErr.Error(),
 		})
 	}
 
@@ -96,11 +97,12 @@ func CreateOrder(c *fiber.Ctx) error {
 			AmbassadorRevenue: 0.1 * total,
 			AdminRevenue: 0.9 * total,
 		}
-		if dbErr := tx.Create(&item); dbErr != nil {
+		if dbErr := tx.Create(&item).Error; dbErr != nil {
+			fmt.Println("Error while creating Order Item", dbErr.Error())
 			tx.Rollback()
 			c.Status(fiber.StatusBadRequest)
-			c.JSON(fiber.Map{
-				"message": "Database Error",
+			return c.JSON(fiber.Map{
+				"message": dbErr.Error(),
 			})
 		}
 
@@ -114,7 +116,9 @@ func CreateOrder(c *fiber.Ctx) error {
 		})
 	}
 
-	stripe.Key = "sk_test_51J8slqSEhLOwuAODgG5RSMHbCNAerpBYq7Kk4xGhlYgidBNoIhnn9PNNlBdCvJ9MsT4Mm3lCAAF03pDkL0UN0MAE00wFv13G6C"
+	fmt.Println(lineItems)
+
+	stripe.Key = ""
 
 	params := stripe.CheckoutSessionParams{
 		SuccessURL: stripe.String("http://localhost:5000/success?source={CHECKOUT_SESSION_ID}"),
@@ -127,16 +131,17 @@ func CreateOrder(c *fiber.Ctx) error {
 	if stripeErr != nil {
 		tx.Rollback()
 		c.Status(fiber.StatusBadRequest)
-		c.JSON(fiber.Map{
+		return c.JSON(fiber.Map{
 			"message": "Stripe Error",
 		})
 	}
 	order.TransactionId = source.ID
-	if dbErr := tx.Save(&order); dbErr != nil {
+	if dbErr := tx.Save(&order).Error; dbErr != nil {
+		fmt.Println("Error while saving transaction", dbErr.Error())
 		tx.Rollback()
 		c.Status(fiber.StatusBadRequest)
-		c.JSON(fiber.Map{
-			"message": "Database Error",
+		return c.JSON(fiber.Map{
+			"message": dbErr.Error(),
 		})
 	}
 	tx.Commit()

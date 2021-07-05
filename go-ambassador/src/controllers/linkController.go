@@ -4,6 +4,7 @@ import (
 	"ambassador/src/database"
 	"ambassador/src/middlewares"
 	"ambassador/src/models"
+	"fmt"
 	"github.com/bxcodec/faker/v3"
 	"github.com/gofiber/fiber/v2"
 	"strconv"
@@ -35,10 +36,10 @@ func CreateLink(c *fiber.Ctx) error {
 	}
 
 	id, _ := middlewares.GetUserId(c)
-
+	fmt.Println(id)
 	link := models.Link{
 	}
-	link.Id = id
+	link.UserId = id
 	link.Code = faker.Username()
 
 	for _, productId := range request.Products{

@@ -169,7 +169,7 @@ func ProductsBackEnd(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"data": paginatedData[(pageParam - 1) * perPage : pageParam * perPage],
+		"data": paginatedData,
 		"total": total,
 		"page" : pageParam,
 		"last_page": total / perPage + 1,
